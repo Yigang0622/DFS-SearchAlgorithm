@@ -1,5 +1,7 @@
 import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Created by Mike on 7/7/2016.
@@ -14,15 +16,18 @@ public class RouteFinder {
     private int targetY;
     private MapPoint[][] bestMap;
 
-    private Queue tempQueue = new ArrayDeque();
-    private Queue bestQueue = new ArrayDeque();
+    private LinkedList tempList = new LinkedList();
+    private LinkedList bestList = new LinkedList();
+
+    private int routeCounter = 0;
+    private int recurseCounter = 0;
 
     public RouteFinder(Map map,int startX,int startY,int targetX,int targetY){
         this.map = map;
-        this.startX = startY;
-        this.startY = startX;
-        this.targetX = targetY;
-        this.targetY = targetX;
+        this.startX = startX;
+        this.startY = startY;
+        this.targetX = targetX;
+        this.targetY = targetY;
         map.setPoint(startX,startY,MapPoint.MAP_PONIT_OCCUPIED);
     }
 
@@ -37,20 +42,14 @@ public class RouteFinder {
         int nextX,nextY;
 
         if (x == targetX && y == targetY){ //到达目标位置
+            routeCounter++;
+
             if (depth<minDepth){
                 minDepth = depth;
-
                 bestMap = map.getMapArr();
-
-                System.out.println();
-                if (tempQueue.size()!=0){
-                    this.bestQueue = tempQueue;
-                    printMapWithRoute();
-                }
-
+                bestList.clear();
+                bestList.addAll(tempList);
             }
-            tempQueue.clear();
-
             return; //达到最优路径
         }
 
@@ -63,11 +62,12 @@ public class RouteFinder {
             }
 
             if (!map.getPoint(nextX,nextY).isOccupied()){
-                tempQueue.offer(new Point(x,y));
-                map.setPoint(nextX,nextY,1);
 
+                tempList.add(new Point(nextX,nextY));
+                map.setPoint(nextX,nextY,1);
                 dfs(nextX,nextY,depth+1);
-                tempQueue.poll();
+                recurseCounter++;
+                tempList.removeLast();
                 map.setPoint(nextX,nextY,0);
             }
 
@@ -76,26 +76,26 @@ public class RouteFinder {
     }
 
     public void findBestRoute(){
-     //   map.getPoint(startX,startY).setType(MapPoint.MAP_PONIT_OCCUPIED);
-        System.out.println("Map Load Complete, 0 for empty, 2 for road block");
-        System.out.println("从（"+startY+","+startX+")导航到（"+targetY+","+targetX+")");
+
+        System.out.println("Map Load Complete, 0 for empty, 2 for road block\n");
+        System.out.println("start nav from ("+startY+","+startX+")to （"+targetY+","+targetX+")");
         dfs(startX,startY,0);
-
-        System.out.println("最短路径"+minDepth);
-       // printMapWithRoute();
-
+        System.out.println("Best route"+minDepth+"steps, total possible routes："+routeCounter+" total number of recursion"+recurseCounter);
+        printMapWithRoute();
 
     }
 
-    public void printMapWithRoute(){
+    private void printMapWithRoute(){
 
-//
-//        for (Object pointObj:bestQueue){
-//            Point point = (Point) pointObj;
-//            System.out.print(point.toString());
-//            bestMap[point.x][point.y].setType(MapPoint.MAP_PONIT_OCCUPIED);
-//        }
-//        System.out.println("\n");
+        System.out.println("Best route: ");
+
+        while (!bestList.isEmpty()){
+            Point point = (Point) bestList.poll();
+            System.out.print("("+point.x+","+point.y+") ");
+            bestMap[point.x][point.y].setType(MapPoint.MAP_PONIT_OCCUPIED);
+        }
+
+        System.out.println();
 
         for (int i =0;i<map.mapHeight;i++){
             for (int j = 0;j<map.mapWidth;j++){

@@ -8,21 +8,7 @@ public class MapPoint {
     public static int MAP_PONIT_OBSTRUCTION = 2;
 
     private boolean occupied = false;
-
     private int type;
-
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
-        if (occupied){
-            this.type = MAP_PONIT_OCCUPIED;
-        }else {
-            this.type = MAP_PONIT_EMPTY;
-        }
-    }
-
-    public MapPoint(){
-        setType(0);
-    }
 
     public MapPoint(int type){
         setType(type);

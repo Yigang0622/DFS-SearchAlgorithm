@@ -8,18 +8,17 @@ import java.io.InputStreamReader;
  */
 public class Map {
 
-    public MapPoint[][] getMapArr() {
-        return mapArr;
-    }
-
     private MapPoint[][] mapArr;
     int mapHeight;
     int mapWidth;
 
+    public MapPoint[][] getMapArr() {
+        return mapArr;
+    }
+
     public Map (String path){
         readMapFromFile(path);
     }
-
 
     public void setPoint(int i,int j,int type){
         mapArr[i][j].setType(type);
@@ -28,7 +27,6 @@ public class Map {
     public MapPoint getPoint(int i,int j){
         return mapArr[i][j];
     }
-
 
 
     public void printMap(){
@@ -50,9 +48,9 @@ public class Map {
         try {
             String encoding="GBK";
             File file=new File(path);
-            if(file.isFile() && file.exists()){ //判断文件是否存在
+            if(file.isFile() && file.exists()){
                 InputStreamReader read = new InputStreamReader(
-                        new FileInputStream(file),encoding);//考虑到编码格式
+                        new FileInputStream(file),encoding);
                 BufferedReader bufferedReader = new BufferedReader(read);
                 String lineTxt = null;
                 while((lineTxt = bufferedReader.readLine()) != null){
